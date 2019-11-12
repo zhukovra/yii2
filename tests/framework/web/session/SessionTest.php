@@ -88,4 +88,34 @@ class SessionTest extends TestCase
 
         $session->destroy();
     }
+
+    /**
+     * Test that session "flashes" working and no
+     */
+    public function testFlash()
+    {
+        $key = 'testKey';
+
+        $session = new Session();
+        $id = $session->getId();
+        $this->assertNotEmpty($id);
+        $this->assertFalse($session->isActive);
+
+        // Get all flashes, write one and close session
+        $flashes = $session->getAllFlashes();
+        $this->assertTrue($session->isActive);
+        $this->assertEquals([], $flashes);
+        $this->assertFalse($session->has($session->flashParam));
+
+        $session->setFlash($key, true);
+        $session->close();
+        $this->assertFalse($session->isActive);
+
+        // Restore session
+        $session = new Session();
+        $session->setId($id);
+        $this->assertEquals([$key => true], $session->getAllFlashes(true));
+        $this->assertFalse($session->has($session->flashParam));
+        $session->destroy(); // Storage cleanup
+    }
 }

@@ -697,7 +697,9 @@ class Session extends Component implements \IteratorAggregate, \ArrayAccess, \Co
                     $counters[$key]++;
                 }
             }
-            $_SESSION[$this->flashParam] = $counters;
+            if ($counters) {
+                $_SESSION[$this->flashParam] = $counters;
+            }
         } else {
             // fix the unexpected problem that flashParam doesn't return an array
             unset($_SESSION[$this->flashParam]);
@@ -782,7 +784,11 @@ class Session extends Component implements \IteratorAggregate, \ArrayAccess, \Co
             }
         }
 
-        $_SESSION[$this->flashParam] = $counters;
+        if ($counters) {
+            $_SESSION[$this->flashParam] = $counters;
+        } else {
+            unset($_SESSION[$this->flashParam]);
+        }
 
         return $flashes;
     }
